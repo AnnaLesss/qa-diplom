@@ -1,8 +1,20 @@
 package test;
 
-import org.junit.jupiter.api.BeforeEach;
+import com.codeborne.selenide.logevents.SelenideLogger;
+import data.Card;
+import data.DataGenerator;
+
+import io.qameta.allure.selenide.AllureSelenide;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvFileSource;
+import page.CreditByCard;
+import page.PaymentByCard;
+import page.HomePage;
 
 import static com.codeborne.selenide.Selenide.open;
+import static org.junit.jupiter.api.Assertions.*;
+
 
 public class UiTests {
 
@@ -11,4 +23,75 @@ public class UiTests {
         open("http://localhost:8080/");
     }
 
+    @BeforeAll
+    static void setUpAll() {
+        SelenideLogger.addListener("allure", new AllureSelenide());
+    }
+
+    @AfterAll
+    static void tearDownAll() {
+        SelenideLogger.removeListener("allure");
+    }
+
+    @ParameterizedTest
+    @CsvFileSource(resources = "/incorrectValues.cvs", numLinesToSkip = 1)
+    @DisplayName("Должен показывать сообщение об ошибке при заполнении полей невалидными значениями")
+    void shouldShowWarningIfValueIsIncorrectForPayment() {
+        Card incorrectValuesCard = new Card();
+        HomePage homePage = new HomePage();
+        PaymentByCard paymentByCard = homePage.goToPaymentByCard();
+        paymentByCard.fillData(incorrectValuesCard);
+        assertTrue(paymentByCard.inputInvalidIsVisible);
+    }
+
+    @ParameterizedTest
+    @CsvFileSource(resources = "/incorrectValues.cvs", numLinesToSkip = 1)
+    @DisplayName("Должен показывать сообщение об ошибке при заполнении полей невалидными значениями")
+    void shouldShowWarningIfValueIsIncorrectForCredit() {
+        Card incorrectValues = new Card();
+        HomePage homePage = new HomePage();
+        CreditByCard creditByCard = homePage.goToCreditByCard();
+        creditByCard.fillData(incorrectValues);
+        assertTrue(creditByCard.inputInvalidIsVisible);
+    }
+
+    @Test
+    @DisplayName("Должен показывать сообщение об ошибке, если срок карты истек, страница оплаты")
+    void shouldShowWarningIfCardIsExpiredForPayment() {
+        Card expiredCard = DataGenerator.getInvalidExpDateCard();
+        HomePage homePage = new HomePage();
+        PaymentByCard paymentByCard = homePage.goToPaymentByCard();
+        paymentByCard.fillData(expiredCard);
+        assertTrue(paymentByCard.inputInvalidIsVisible(),"Должен показывать сообщение об ошибке, если срок карты истек, страница оплаты");
+    }
+
+    @Test
+    @DisplayName("Должен показывать сообщение об ошибке, если срок карты истек, страница кредита")
+    void shouldShowWarningIfCardIsExpiredForCredit() {
+        Card expiredCard = DataGenerator.getInvalidExpDateCard(-1);
+        HomePage homePage = new HomePage();
+        CreditByCard creditByCard = homePage.goToCreditByCard();
+        creditByCard.fillData(expiredCard);
+        assertTrue(creditByCard.inputInvalidIsVisible(),"Должен показывать сообщение об ошибке, если срок карты истек, страница кредита");
+    }
+
+    @Test
+    @DisplayName("Должен показывать сообщение об ошибке, если срок действия карты более 5 лет, страница оплаты")
+    void shouldShowWarningIfExpirationDateMoreThan5YearsForPayment() {
+        Card invalidExpDateCard = DataGenerator.getInvalidExpDateCard(61);
+        HomePage homePage = new HomePage();
+        PaymentByCard paymentByCard = homePage.goToPaymentByCard();
+        paymentByCard.fillData(invalidExpDateCard);
+        assertTrue(paymentByCard.inputInvalidIsVisible(),"Должен показывать сообщение об ошибке, если срок действия карты более 5 лет, страница оплаты");
+    }
+
+    @Test
+    @DisplayName("Должен показывать сообщение об ошибке, если срок действия карты более 5 лет, страница кредита")
+    void shouldShowWarningIfExpirationDateMoreThan5YearsForCredit() {
+        Card invalidExpDateCard = DataGenerator.getInvalidExpDateCard(61);
+        HomePage homePage = new HomePage();
+        CreditByCard creditByCard = homePage.goToCreditByCard();
+        creditByCard.fillData(invalidExpDateCard);
+        assertTrue(creditByCard.inputInvalidIsVisible(),"Должен показывать сообщение об ошибке, если срок действия карты более 5 лет, страница кредита");
+    }
 }

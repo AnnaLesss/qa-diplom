@@ -1,9 +1,10 @@
 package page;
 
 import com.codeborne.selenide.SelenideElement;
+import data.Card;
 
-import static com.codeborne.selenide.Condition.exactText;
-import static com.codeborne.selenide.Condition.text;
+import static com.codeborne.selenide.Condition.*;
+import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
@@ -19,5 +20,28 @@ public class CreditByCard {
     private SelenideElement notificationError = $(".notification_status_error");
     private SelenideElement inputInvalid = $(".input__sub");
 
+    public CreditByCard() {
+        heading.shouldBe(visible);
+    }
 
+    public void fillData(Card card) {
+        cardNumberField.setValue(card.getNumber());
+        monthField.setValue(card.getMonths());
+        yearField.setValue(card.getYear());
+        ownerField.setValue(card.getName());
+        cvcField.setValue(card.getCvc());
+        continueButton.click();
+    }
+
+    public void notificationOkIsVisible() {
+        notificationOK.waitUntil(visible, 15000);
+    }
+
+    public void notificationErrorIsVisible() {
+        notificationError.waitUntil(visible, 15000);
+    }
+
+    public boolean inputInvalidIsVisible() {
+        return inputInvalid.isDisplayed();
+    }
 }

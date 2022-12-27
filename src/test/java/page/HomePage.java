@@ -14,14 +14,15 @@ public class HomePage {
         heading.shouldBe(visible);
     }
 
-    public PaymentByCard goToPaymentPage() {
+    public PaymentByCard goToPaymentByCard() {
         buyButton.click();
         return new PaymentByCard();
     }
 
-    public CreditByCard goToCreditPage() {
+    public CreditByCard goToCreditByCard() {
         creditButton.click();
         return new CreditByCard();
     }
-
 }
+
+

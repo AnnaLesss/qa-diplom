@@ -1,8 +1,9 @@
 package page;
 
 import com.codeborne.selenide.SelenideElement;
+import data.Card;
 
-
+import data.DataGenerator;
 import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.$;
@@ -19,5 +20,30 @@ public class PaymentByCard {
     private SelenideElement notificationOK = $(".notification_status_ok");
     private SelenideElement notificationError = $(".notification_status_error");
     private SelenideElement inputInvalid = $(".input__sub");
+
+    public PaymentByCard() {
+        heading.shouldBe(visible);
+    }
+
+    public void fillData(DataGenerator dataGenerator) {
+        cardNumberField.setValue(dataGenerator.getValidCard());
+        monthField.setValue(dataGenerator.generateMonths(1));
+        yearField.setValue(dataGenerator.generateYear());
+        ownerField.setValue(dataGenerator.generateName("eng"));
+        cvcField.setValue(dataGenerator.generateCvc());
+        continueButton.click();
+    }
+
+    public void notificationOkIsVisible() {
+        notificationOK.waitUntil(visible, 12000);
+    }
+
+    public void notificationErrorIsVisible() {
+        notificationError.waitUntil(visible, 12000);
+    }
+
+    public boolean inputInvalidIsVisible() {
+        return inputInvalid.isDisplayed();
+    }
     }
 

@@ -7,9 +7,8 @@ import lombok.Data;
 @AllArgsConstructor
 public class Card {
     private String number;
-    private String months;
+    private String month;
     private String year;
-    private String name;
+    private String holder;
     private String cvc;
 }
-

@@ -3,11 +3,13 @@ package page;
 import com.codeborne.selenide.SelenideElement;
 import data.Card;
 
-import static com.codeborne.selenide.Condition.*;
+import static com.codeborne.selenide.Condition.exactText;
+import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
+
 public class CreditByCard {
     private SelenideElement heading = $$("h3").find(text("Кредит по данным карты"));
     private SelenideElement cardNumberField = $(byText("Номер карты")).parent().$(".input__control");
@@ -26,9 +28,9 @@ public class CreditByCard {
 
     public void fillData(Card card) {
         cardNumberField.setValue(card.getNumber());
-        monthField.setValue(card.getMonths());
+        monthField.setValue(card.getMonth());
         yearField.setValue(card.getYear());
-        ownerField.setValue(card.getName());
+        ownerField.setValue(card.getHolder());
         cvcField.setValue(card.getCvc());
         continueButton.click();
     }

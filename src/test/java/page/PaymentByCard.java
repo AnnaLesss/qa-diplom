@@ -2,8 +2,6 @@ package page;
 
 import com.codeborne.selenide.SelenideElement;
 import data.Card;
-
-import data.DataGenerator;
 import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.$;
@@ -25,12 +23,12 @@ public class PaymentByCard {
         heading.shouldBe(visible);
     }
 
-    public void fillData(DataGenerator dataGenerator) {
-        cardNumberField.setValue(dataGenerator.getValidCard());
-        monthField.setValue(dataGenerator.generateMonths(1));
-        yearField.setValue(dataGenerator.generateYear());
-        ownerField.setValue(dataGenerator.generateName("eng"));
-        cvcField.setValue(dataGenerator.generateCvc());
+    public void fillData(Card card) {
+        cardNumberField.setValue(card.getNumber());
+        monthField.setValue(card.getMonth());
+        yearField.setValue(card.getYear());
+        ownerField.setValue(card.getHolder());
+        cvcField.setValue(card.getCvc());
         continueButton.click();
     }
 
@@ -45,5 +43,5 @@ public class PaymentByCard {
     public boolean inputInvalidIsVisible() {
         return inputInvalid.isDisplayed();
     }
-    }
+}
 
